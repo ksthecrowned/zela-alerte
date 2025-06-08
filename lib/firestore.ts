@@ -61,6 +61,7 @@ export const createReport = async (reportData: Omit<OutageReport, 'id' | 'create
   const reportsRef = collection(db, REPORTS_COLLECTION);
   const docRef = await addDoc(reportsRef, {
     ...reportData,
+    description: reportData.description ?? '',
     timestamp: Timestamp.fromDate(reportData.timestamp),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
