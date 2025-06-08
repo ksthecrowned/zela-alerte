@@ -14,6 +14,8 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { setupNotificationListeners } from '@/lib/notifications';
 import { useColorScheme } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -46,20 +48,24 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <Stack 
-          screenOptions={{ 
-            headerShown: false,
-            statusBarStyle: theme === 'light' ? 'dark' : 'auto',
-          }}
-        >
-          <Stack.Screen name="onboarding" />
-          <Stack.Screen name="auth" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </AuthProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <AuthProvider>
+            <Stack 
+              screenOptions={{ 
+                headerShown: false,
+                statusBarStyle: theme === 'light' ? 'dark' : 'auto',
+              }}
+            >
+              <Stack.Screen name="onboarding" />
+              <Stack.Screen name="auth" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </AuthProvider>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }

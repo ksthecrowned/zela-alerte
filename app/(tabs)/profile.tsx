@@ -26,6 +26,9 @@ import {
   ChevronRight,
   FileText,
 } from 'lucide-react-native';
+import { CurrentCityPicker } from '@/components/CurrentCityPicker';
+import { CONGO_CITIES } from '@/data/locations';
+import { NeighborhoodSelector } from '@/components/NeighborhoodSelector';
 
 export default function ProfileScreen() {
   const { colors, theme, setTheme } = useTheme();
@@ -130,6 +133,22 @@ export default function ProfileScreen() {
     }
   };
 
+  const updateUserCity = async (city: string) => {
+    try {
+      await updateUserProfile({ city });
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la ville:', error);
+    }
+  }
+
+  const updateUserNeighborhoods = async (neighborhoods: string[]) => {
+    try {
+      await updateUserProfile({ neighborhoods });
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des quartiers:', error);
+    }
+  }
+
   const getThemeLabel = () => {
     switch (theme) {
       case 'light':
@@ -195,38 +214,19 @@ export default function ProfileScreen() {
 
         {/* Location */}
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
-          <TouchableOpacity style={styles.settingItem}>
-            <View style={styles.settingLeft}>
-              <MapPin size={20} color={colors.textSecondary} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>
-                  Ville actuelle
-                </Text>
-                <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>
-                  {user?.city || 'Non définie'}
-                </Text>
-              </View>
-            </View>
-            <ChevronRight size={16} color={colors.textSecondary} />
-          </TouchableOpacity>
+          <CurrentCityPicker
+            value={user?.city || 'brazzaville'}
+            onCityChange={(city) => updateUserCity(city)}
+          />
         </View>
 
         {/* My Reports */}
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
-          <TouchableOpacity style={styles.settingItem} onPress={handleViewReports}>
-            <View style={styles.settingLeft}>
-              <FileText size={20} color={colors.textSecondary} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>
-                  Mes signalements
-                </Text>
-                <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>
-                  Gérer vos alertes publiées
-                </Text>
-              </View>
-            </View>
-            <ChevronRight size={16} color={colors.textSecondary} />
-          </TouchableOpacity>
+          <NeighborhoodSelector 
+            selectedCity={user?.city || 'brazzaville'}
+            selectedNeighborhoods={user?.neighborhoods || []}
+            onNeighborhoodsChange={(neighborhoods) => updateUserNeighborhoods(neighborhoods)}
+          />
         </View>
 
         {/* Notifications */}

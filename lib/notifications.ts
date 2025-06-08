@@ -6,11 +6,10 @@ import { updateUser } from './firestore';
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
+    shouldPlaySound: false,
     shouldSetBadge: false,
     shouldShowBanner: true,
-    shouldShowInList: true,
+    shouldShowList: true,
   }),
 });
 
@@ -42,7 +41,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
     
     try {
       token = (await Notifications.getExpoPushTokenAsync({
-        projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+        projectId: process.env.EXPO_PUBLIC_EAS_APP_ID,
       })).data;
     } catch (error) {
       console.error('Erreur lors de l\'obtention du token push:', error);

@@ -91,7 +91,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={variant === 'outline' ? colors.primary : '#FFFFFF'} />
       ) : (
-        <Text style={[getTextStyle(), textStyle]}>{title}</Text>
+        <Text style={[getTextStyle(), textStyle, { opacity: disabled ? 0.25 : 1 }]}>{title}</Text>
       )}
     </TouchableOpacity>
   );

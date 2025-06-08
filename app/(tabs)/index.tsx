@@ -174,6 +174,12 @@ export default function HomeScreen() {
               title="Effacer les filtres"
               variant="outline"
               size="small"
+              style={{ marginTop: 10 }}
+              disabled={
+                selectedNeighborhood === ''
+                && selectedStatus === ''
+                && selectedService === ''
+              }
               onPress={clearFilters}
             />
           </View>

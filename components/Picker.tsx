@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Modal,
   FlatList,
   ViewStyle,
 } from 'react-native';
-import { useTheme } from '@/contexts/ThemeContext';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { ChevronDown, Check } from 'lucide-react-native';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface PickerOption {
   label: string;
@@ -36,39 +36,54 @@ export function Picker({
   containerStyle,
 }: PickerProps) {
   const { colors } = useTheme();
-  const [modalVisible, setModalVisible] = useState(false);
+  const [selected, setSelected] = useState(value);
 
-  const selectedOption = options.find(option => option.value === value);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['50%'], []);
+
+  const openBottomSheet = () => bottomSheetRef.current?.present();
+  const closeBottomSheet = () => bottomSheetRef.current?.dismiss();
+
+  const selectedOption = options.find((opt) => opt.value === selected);
+
+  const handleSelect = (option: PickerOption) => {
+    onValueChange(option.value);
+    setSelected(option.value);
+    closeBottomSheet();
+  };
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
 
   const renderOption = ({ item }: { item: PickerOption }) => (
     <TouchableOpacity
       style={[
         styles.option,
         { borderColor: colors.surface },
-        item.value === value && { backgroundColor: colors.surface },
+        item.value === selected && { backgroundColor: colors.border },
       ]}
-      onPress={() => {
-        onValueChange(item.value);
-        setModalVisible(false);
-      }}
+      onPress={() => handleSelect(item)}
     >
       <Text style={[styles.optionText, { color: colors.text }]}>
         {item.label}
       </Text>
-      {item.value === value && (
-        <Check size={20} color={colors.primary} />
-      )}
+      {item.value === selected && <Check size={20} color={colors.primary} />}
     </TouchableOpacity>
   );
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && (
-        <Text style={[styles.label, { color: colors.text }]}>
-          {label}
-        </Text>
-      )}
-      
+      {label && <Text style={[styles.label, { color: colors.text }]}>{label}</Text>}
+
       <TouchableOpacity
         style={[
           styles.picker,
@@ -77,14 +92,12 @@ export function Picker({
             borderColor: error ? colors.error : colors.border,
           },
         ]}
-        onPress={() => setModalVisible(true)}
+        onPress={openBottomSheet}
       >
         <Text
           style={[
             styles.pickerText,
-            {
-              color: selectedOption ? colors.text : colors.textSecondary,
-            },
+            { color: selectedOption ? colors.text : colors.textSecondary },
           ]}
         >
           {selectedOption ? selectedOption.label : placeholder}
@@ -92,44 +105,27 @@ export function Picker({
         <ChevronDown size={20} color={colors.textSecondary} />
       </TouchableOpacity>
 
-      {error && (
-        <Text style={[styles.error, { color: colors.error }]}>
-          {error}
-        </Text>
-      )}
+      {error && <Text style={[styles.error, { color: colors.error }]}>{error}</Text>}
 
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: colors.surface }}
+        handleIndicatorStyle={{ backgroundColor: colors.border }}
       >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
-            <View style={[styles.modalHeader, { borderColor: colors.border }]}>
-              <Text style={[styles.modalTitle, { color: colors.text }]}>
-                {label || 'Sélectionner une option'}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}
-              >
-                <Text style={[styles.closeButtonText, { color: colors.primary }]}>
-                  Fermer
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ width: '100%', height: 300 }}>
-              <FlatList
-                data={options}
-                renderItem={renderOption}
-                keyExtractor={(item) => item.value}
-                style={styles.optionsList}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
+        <BottomSheetView style={{ flex: 1 }}>
+          <Text style={[styles.sheetTitle, { color: colors.text, borderColor: colors.border }]}>
+            {label || 'Sélectionner une option'}
+          </Text>
+          <FlatList
+            data={options}
+            renderItem={renderOption}
+            keyExtractor={(item) => item.value}
+            style={styles.optionsList}
+          />
+        </BottomSheetView>
+      </BottomSheetModal>
     </View>
   );
 }
@@ -163,33 +159,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     marginTop: 4,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '70%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-  },
-  modalTitle: {
+  sheetTitle: {
     fontSize: 18,
     fontFamily: 'Inter-SemiBold',
-  },
-  closeButton: {
-    padding: 4,
-  },
-  closeButtonText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
+    padding: 16,
+    borderBottomWidth: 1,
   },
   optionsList: {
     flex: 1,

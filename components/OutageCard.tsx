@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useTheme } from '@/contexts/ThemeContext';
-import { SERVICE_TYPES, OUTAGE_STATUS } from '@/data/locations';
+import { SERVICE_TYPES, OUTAGE_STATUS, CONGO_CITIES } from '@/data/locations';
 import { Zap, Droplets, Wifi, MapPin, Clock } from 'lucide-react-native';
 
 interface OutageReport {
@@ -88,7 +88,7 @@ export function OutageCard({ report, onPress }: OutageCardProps) {
       <View style={styles.location}>
         <MapPin size={16} color={colors.textSecondary} />
         <Text style={[styles.locationText, { color: colors.textSecondary }]}>
-          {report.neighborhood}, {report.city}
+          {report.neighborhood}, {CONGO_CITIES.find(c => c.id === report.city)?.name}
         </Text>
       </View>
 
