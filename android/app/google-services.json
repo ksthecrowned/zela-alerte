@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1098302949665",
+    "project_id": "zela-alert",
+    "storage_bucket": "zela-alert.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098302949665:android:8936156ea272c2ddcbd660",
+        "android_client_info": {
+          "package_name": "com.kaiser_styve.zela_alerte"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1098302949665-kph4o1rh7vq3j0b4qt7upun8670tjnc7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzEI4ZHDUvVMrCB7jTPBaWydfSJBHWUXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1098302949665-kph4o1rh7vq3j0b4qt7upun8670tjnc7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
