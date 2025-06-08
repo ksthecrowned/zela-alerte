@@ -1,13 +1,14 @@
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
-import { updateUser } from './firestore';
+import { getSubscribedUsersForReport, updateUser } from './firestore';
+import { OutageReport } from '@/types';
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
     shouldShowBanner: true,
     shouldShowList: true,
   }),
@@ -90,7 +91,59 @@ export async function sendLocalNotification(title: string, body: string, data?: 
       title,
       body,
       data,
+      sound: 'default',
     },
     trigger: null, // Show immediately
   });
+}
+
+export async function notifyUsersOfNewReport(reportData: OutageReport) {
+  try {
+    const subscribedUsers = await getSubscribedUsersForReport(reportData);
+    const tokens = subscribedUsers
+      .map(u => u.fcmToken)
+      .filter(token => typeof token === 'string' && token.startsWith('ExponentPushToken'));
+
+    if (tokens.length === 0) return;
+
+    const messageBody = `Incident à ${reportData.neighborhood} (${reportData.serviceType})`;
+
+    const batches = chunkArray(tokens, 100);
+
+    for (const batch of batches) {
+      const messages = batch.map(token => ({
+        to: token,
+        sound: 'default',
+        title: '🚨 Nouvelle alerte',
+        body: messageBody,
+        data: { reportId: reportData.id },
+      }));
+
+      const res = await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Accept-Encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(messages),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || json?.data?.some((d: any) => d.status !== 'ok')) {
+        console.warn('Réponse partiellement invalide:', json);
+      }
+    }
+  } catch (e) {
+    console.error('Erreur lors de l\'envoi des notifications:', e);
+  }
+}
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
 }

@@ -11,7 +11,7 @@ import {
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { getUser, createUser, updateUser } from '@/lib/firestore';
-import { registerForPushNotificationsAsync, updateUserNotificationToken } from '@/lib/notifications';
+import { registerForPushNotificationsAsync, sendLocalNotification, updateUserNotificationToken } from '@/lib/notifications';
 import { User } from '@/types';
 
 interface AuthContextType {
@@ -35,6 +35,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFirebaseUser(firebaseUser);
+      // sendLocalNotification(
+      //   'Bienvenu sur Zela Alerte',
+      //   'Votre application de commérage préférée !!!!', 
+      //   {}
+      // )
       
       if (firebaseUser) {
         try {

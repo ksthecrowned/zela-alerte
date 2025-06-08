@@ -19,6 +19,7 @@ import { CONGO_CITIES, SERVICE_TYPES, OUTAGE_STATUS } from '@/data/locations';
 import { createReport } from '@/lib/firestore';
 import { OutageReport } from '@/types';
 import { Camera, Image as ImageIcon } from 'lucide-react-native';
+import { notifyUsersOfNewReport } from '@/lib/notifications';
 
 export default function ReportScreen() {
   const { colors } = useTheme();
@@ -69,6 +70,7 @@ export default function ReportScreen() {
       };
 
       await createReport(reportData);
+      await notifyUsersOfNewReport(reportData as OutageReport)
       
       Alert.alert(
         'Signalement envoyé',

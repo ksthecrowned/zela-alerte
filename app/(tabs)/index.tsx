@@ -54,7 +54,7 @@ export default function HomeScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    // The subscription will automatically update the data
+    setTimeout(() => setRefreshing(false), 1000);
   };
 
   const filteredReports = reports.filter(report => {

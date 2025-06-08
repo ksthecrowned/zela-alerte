@@ -180,3 +180,27 @@ export const getUserReports = async (userId: string): Promise<OutageReport[]> =>
     } as OutageReport;
   });
 };
+
+export async function getSubscribedUsersForReport(report: OutageReport): Promise<User[]> {
+  // Construction de la requête avec filtre ville + type de service
+  const usersRef = collection(db, 'users');
+
+  const q = query(
+    usersRef,
+    where('city', '==', report.city),
+    where(`notificationPreferences.${report.serviceType}`, '==', true)
+  );
+
+  const snapshot = await getDocs(q);
+
+  const users: User[] = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as User[];
+
+  // Filtrage uniquement sur le quartier (Firestore ne permet pas de faire `array-contains` sur deux champs en même temps)
+  return users.filter(user =>
+    !!user.fcmToken &&
+    user.neighborhoods?.includes(report.neighborhood)
+  );
+}
