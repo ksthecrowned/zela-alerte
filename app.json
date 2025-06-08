@@ -44,6 +44,11 @@
       "router": {},
       "eas": {
         "projectId": "38b7d233-e0e1-4d15-aaff-59d39b20f60b"
+      },
+      "doctor": {
+        "reactNativeDirectoryCheck": {
+          "listUnknownPackages": false
+        }
       }
     }
   }
