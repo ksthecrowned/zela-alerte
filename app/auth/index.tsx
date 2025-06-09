@@ -9,7 +9,8 @@ import {
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/Button';
-import { Zap } from 'lucide-react-native';
+import { Bell } from 'lucide-react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function AuthIndexScreen() {
   const { colors } = useTheme();
@@ -17,16 +18,21 @@ export default function AuthIndexScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <View style={[styles.logoContainer, { backgroundColor: colors.surface }]}>
-          <Zap size={64} color={colors.primary} />
-        </View>
+        <LinearGradient
+          colors={['#f97316', '#ef4444']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.logoContainer}
+        >
+          <Bell size={64} color={"#F5F5F5"} />
+        </LinearGradient>
 
         <Text style={[styles.title, { color: colors.text }]}>
           Zela Alerte
         </Text>
 
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          Signalements en temps réel des coupures d'électricité, d'eau et d'internet au Congo-Brazzaville
+          L'alerte citoyenne entre tes mains
         </Text>
       </View>
 
@@ -59,9 +65,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   logoContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 100,
+    height: 100,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 32,

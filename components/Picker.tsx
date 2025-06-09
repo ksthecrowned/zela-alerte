@@ -116,7 +116,7 @@ export function Picker({
       >
         <BottomSheetView style={{ flex: 1 }}>
           <Text style={[styles.sheetTitle, { color: colors.text, borderColor: colors.border }]}>
-            {label || 'Sélectionner une option'}
+            {placeholder || 'Sélectionner une option'}
           </Text>
           <FlatList
             data={options}

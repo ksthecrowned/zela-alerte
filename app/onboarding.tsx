@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,27 +10,26 @@ import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/Button';
 import { Zap, Bell, Users } from 'lucide-react-native';
-
-const { width, height } = Dimensions.get('window');
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const onboardingData = [
   {
     title: 'Signalez les coupures en un clic',
     subtitle: 'Électricité, eau ou internet : informez votre communauté instantanément',
     icon: Zap,
-    color: '#F59E0B',
+    color: '#f97316',
   },
   {
     title: 'Soyez alerté quand ça revient',
     subtitle: 'Recevez des notifications push dès que les services sont rétablis',
     icon: Bell,
-    color: '#3B82F6',
+    color: '#f97316',
   },
   {
     title: 'Ensemble, soyons informés en temps réel',
     subtitle: 'Rejoignez la communauté et restez connecté à votre quartier',
     icon: Users,
-    color: '#10B981',
+    color: '#f97316',
   },
 ];
 
@@ -38,20 +37,37 @@ export default function OnboardingScreen() {
   const { colors } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleNext = () => {
+  const ONBOARDING_KEY = 'hasSeenOnboarding';
+
+  const handleNext = async () => {
     if (currentIndex < onboardingData.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
+      await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
       router.replace('/auth');
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
+    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
     router.replace('/auth');
   };
 
   const currentData = onboardingData[currentIndex];
   const IconComponent = currentData.icon;
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      const hasSeen = await AsyncStorage.getItem(ONBOARDING_KEY);
+      if (hasSeen === 'true') {
+        router.replace('/auth');
+      } else {
+        router.replace('/onboarding');
+      }
+    };
+  
+    checkOnboarding();
+  }, []);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -105,7 +121,7 @@ export default function OnboardingScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, paddingTop: 20,
+    flex: 1, paddingTop: 40,
   },
   header: {
     paddingHorizontal: 24,

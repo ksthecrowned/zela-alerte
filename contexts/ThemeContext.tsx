@@ -28,7 +28,7 @@ interface ThemeContextType {
 const lightColors = {
   background: '#FFFFFF',
   surface: '#F8FAFC',
-  primary: '#3B82F6',
+  primary: '#f97316',
   secondary: '#14B8A6',
   accent: '#F97316',
   text: '#1E293B',
@@ -38,13 +38,13 @@ const lightColors = {
   warning: '#F59E0B',
   error: '#EF4444',
   tabBar: '#FFFFFF',
-  tabBarActive: '#3B82F6',
+  tabBarActive: '#ef4444',
 };
 
 const darkColors = {
   background: '#0F172A',
   surface: '#1E293B',
-  primary: '#60A5FA',
+  primary: '#f97316',
   secondary: '#2DD4BF',
   accent: '#FB923C',
   text: '#F1F5F9',
@@ -54,7 +54,7 @@ const darkColors = {
   warning: '#FBBF24',
   error: '#F87171',
   tabBar: '#1E293B',
-  tabBarActive: '#60A5FA',
+  tabBarActive: '#ef4444',
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

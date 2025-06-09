@@ -18,6 +18,7 @@ import { CONGO_CITIES, SERVICE_TYPES, OUTAGE_STATUS } from '@/data/locations';
 import { subscribeToReports } from '@/lib/firestore';
 import { OutageReport } from '@/types';
 import { MapPin, Filter } from 'lucide-react-native';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -134,7 +135,8 @@ export default function HomeScreen() {
           </View>
           <TouchableOpacity
             style={styles.filterButton}
-            onPress={() => setShowFilters(!showFilters)}
+            onPress={() => router.replace('/onboarding')}
+            // onPress={() => setShowFilters(!showFilters)}
           >
             <Filter size={20} color={colors.text} />
           </TouchableOpacity>

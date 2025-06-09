@@ -25,6 +25,7 @@ import {
   Trash2,
   ChevronRight,
   FileText,
+  HelpCircle,
 } from 'lucide-react-native';
 import { CurrentCityPicker } from '@/components/CurrentCityPicker';
 import { CONGO_CITIES } from '@/data/locations';
@@ -192,6 +193,9 @@ export default function ProfileScreen() {
         <Text style={[styles.title, { color: colors.text }]}>
           Profil
         </Text>
+        <TouchableOpacity>
+          <HelpCircle size={24} color="#FFFFFF" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -311,16 +315,16 @@ export default function ProfileScreen() {
             title="Se déconnecter"
             variant="outline"
             onPress={handleSignOut}
-            style={[styles.actionButton, { borderColor: colors.error }] as any}
-            textStyle={{ color: colors.error }}
+            style={[styles.actionButton, { borderColor: colors.tabBarActive }] as any}
+            textStyle={{ color: colors.tabBarActive }}
           />
 
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={handleDeleteAccount}
           >
-            <Trash2 size={16} color={colors.error} />
-            <Text style={[styles.deleteButtonText, { color: colors.error }]}>
+            <Trash2 size={16} color={colors.tabBarActive} />
+            <Text style={[styles.deleteButtonText, { color: colors.tabBarActive }]}>
               Supprimer mon compte
             </Text>
           </TouchableOpacity>
@@ -338,6 +342,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   title: {
     fontSize: 28,
