@@ -106,7 +106,11 @@ export async function notifyUsersOfNewReport(reportData: OutageReport) {
 
     if (tokens.length === 0) return;
 
-    const messageBody = `Incident à ${reportData.neighborhood} (${reportData.serviceType})`;
+    const serviceLabel = getServiceLabel(reportData.serviceType);
+    const location = reportData.neighborhood || reportData.city || 'votre zone';
+
+    const title = '🚨 Nouvelle alerte';
+    const body = generateAlertMessage(reportData.status, serviceLabel, location);
 
     const batches = chunkArray(tokens, 100);
 
@@ -114,8 +118,8 @@ export async function notifyUsersOfNewReport(reportData: OutageReport) {
       const messages = batch.map(token => ({
         to: token,
         sound: 'default',
-        title: '🚨 Nouvelle alerte',
-        body: messageBody,
+        title,
+        body,
         data: { reportId: reportData.id },
       }));
 
@@ -146,4 +150,27 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
     result.push(arr.slice(i, i + size));
   }
   return result;
+}
+
+function getServiceLabel(serviceType: string): string {
+  switch (serviceType) {
+    case 'electricity':
+      return "l'électricité";
+    case 'water':
+      return "l'eau";
+    case 'internet':
+      return "l'internet";
+    default:
+      return serviceType;
+  }
+}
+
+function generateAlertMessage(status: string, serviceLabel: string, location: string): string {
+  if (status === 'resolved') {
+    return `Rétablissement de ${serviceLabel} à ${location}`;
+  } else if (status === 'outage') {
+    return `Coupure de ${serviceLabel} signalée à ${location}`;
+  } else {
+    return `${serviceLabel} : mise à jour à ${location}`;
+  }
 }
